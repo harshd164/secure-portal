@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Owner Console</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #020617;
+        color: #f8fafc;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .navbar {
+        background: #0f172a;
+        border-bottom: 1px solid #1e293b;
+      }
+      .upload-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 16px;
+      }
+      .form-label {
+        color: #94a3b8;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      .form-control {
+        background: #0f172a;
+        border: 1px solid #334155;
+        color: white;
+        padding: 12px;
+      }
+      .form-control:focus {
+        background: #0f172a;
+        border-color: #10b981;
+        color: white;
+        box-shadow: none;
+      }
+      .btn-upload {
+        background: #10b981;
+        border: none;
+        color: white;
+        font-weight: 700;
+        padding: 15px;
+      }
+      .btn-upload:hover {
+        background: #059669;
+      }
+      .input-group-text {
+        background: #0f172a;
+        border-color: #334155;
+        color: #94a3b8;
+      }
+    </style>
+    <script>
+      function getMyLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((pos) => {
+            document.getElementById("lat").value =
+              pos.coords.latitude.toFixed(6);
+            document.getElementById("lon").value =
+              pos.coords.longitude.toFixed(6);
+            alert("Your current coordinates captured!");
+          });
+        } else {
+          alert("Geolocation not supported");
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark px-4 py-3">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-lock text-success me-3 fs-4"></i>
+        <div>
+          <h6 class="mb-0 text-white fw-bold">Encryption Console</h6>
+          <small class="text-secondary" style="font-size: 0.75rem"
+            >SECURE UPLOAD MODE</small
+          >
+        </div>
+      </div>
+      <a href="/logout" class="text-secondary text-decoration-none"
+        ><i class="fas fa-power-off me-2"></i>Logout</a
+      >
+    </nav>
+
+    <div class="container mt-5">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ category }} bg-dark border-{{ category }} text-{{ category }} mb-4"
+      >
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="upload-card p-5">
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+              <div class="mb-5">
+                <label class="form-label">Select Document</label>
+                <input
+                  type="file"
+                  name="file"
+                  class="form-control form-control-lg"
+                  required
+                />
+              </div>
+
+              <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                  <label class="form-label">Recipient Email</label>
+                  <input
+                    type="email"
+                    name="beneficiary"
+                    class="form-control"
+                    value="user@corp.com"
+                    required
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Access PIN</label>
+                  <input
+                    type="password"
+                    name="pin"
+                    class="form-control"
+                    placeholder="••••"
+                    required
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Time to Live</label>
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      name="expiry"
+                      class="form-control"
+                      value="24"
+                    />
+                    <span class="input-group-text">HRS</span>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Geofence Radius</label>
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      name="radius"
+                      class="form-control"
+                      value="100"
+                    />
+                    <span class="input-group-text">Meters</span>
+                  </div>
+                </div>
+
+                <!-- PRECISE LOCATION INPUT -->
+                <div class="col-12">
+                  <label class="form-label d-flex justify-content-between">
+                    <span>Target Coordinates</span>
+                    <a
+                      href="#"
+                      onclick="getMyLocation()"
+                      class="text-success text-decoration-none small"
+                      ><i class="fas fa-crosshairs"></i> Use Current Location</a
+                    >
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text">Lat</span>
+                    <input
+                      type="text"
+                      name="target_lat"
+                      id="lat"
+                      class="form-control"
+                      placeholder="18.520430"
+                      required
+                    />
+                    <span class="input-group-text">Lon</span>
+                    <input
+                      type="text"
+                      name="target_lon"
+                      id="lon"
+                      class="form-control"
+                      placeholder="73.856744"
+                      required
+                    />
+                  </div>
+                  <div class="form-text text-secondary">
+                    <i class="fab fa-google text-muted"></i> You can copy
+                    coordinates from Google Maps (Right click -> First option)
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-upload w-100 rounded-3 mt-3">
+                <i class="fas fa-shield-alt me-2"></i> ENCRYPT & UPLOAD
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

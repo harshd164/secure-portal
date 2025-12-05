@@ -1,0 +1,6 @@
+flask
+cryptography
+requests
+gunicorn
+pymupdf
+python-docx
